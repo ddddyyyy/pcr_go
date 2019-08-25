@@ -1,0 +1,5 @@
+applications:
+  - name: pcr-go-server
+    random-route: true
+    memory: 256M
+    buildpack: go_buildpack

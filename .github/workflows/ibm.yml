@@ -1,0 +1,59 @@
+name: IBM Cloud Auto Restart
+
+on:
+  push:
+    paths:
+      - '**'
+      - '!equipment.json'
+  schedule:
+    - cron: '0 5 * * FRI'
+
+jobs:
+  ibm-cloud-restart:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
+          fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
+      - name: Fetch data to equipment.json
+        run: |
+          curl --request GET -sL \
+               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/updateHeartHot'
+          curl --request GET -sL \
+               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/get'\
+               --output './equipment.json'
+      - name: Commit files
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git commit -m "Update equipment.json automatically" -a
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Init
+        run: |
+          chmod -R 777 ./IBM_Cloud_CLI/
+      - name: Login IBM Cloud
+        env:
+          IBM_ACCOUNT: ${{ secrets.IBM_ACCOUNT }}
+          REGION_NUM: ${{ secrets.REGION_NUM }}
+        run: |
+          ./IBM_Cloud_CLI/ibmcloud login -a https://cloud.ibm.com <<EOF
+          $IBM_ACCOUNT
+          $REGION_NUM
+          n
+          n
+          EOF
+      - name: Target IBM Cloud
+        env:
+          RESOURSE_ID: ${{ secrets.RESOURSE_ID }}
+        run: |
+          ./IBM_Cloud_CLI/ibmcloud target -g "$RESOURSE_ID"
+          ./IBM_Cloud_CLI/ibmcloud target --cf
+          ./IBM_Cloud_CLI/ibmcloud cf install -v 6.51.0
+      - name: Republish IBM Cloud FOR PCR GO SERVER
+        run: |
+          ./IBM_Cloud_CLI/ibmcloud cf push
