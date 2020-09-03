@@ -1,6 +1,6 @@
 # 公主连接装备查看器
 
-> [访问地址](https://pcr-go-server.us-south.cf.appdomain.cloud/get)
+> [访问地址](https://pcr-go-server.us-south.cf.appdomain.cloud/)
 
 ## 实现功能
 
