@@ -13,16 +13,23 @@ import (
 
 var Dao *gorm.DB
 var MapCache map[string][]Equipment
+var ApplicationCache map[string]interface{}
 var equipments []Equipment
+
+const (
+	EquipmentDataFile   = "./equipment.json"
+	ApplicationDataFile = "./application.json"
+)
 
 func init() {
 	MapCache = make(map[string][]Equipment)
+	ApplicationCache = make(map[string]interface{})
 	var err error
 
 	//文件读取
-	filePtr, err := os.Open("./equipment.json")
+	filePtr, err := os.Open(EquipmentDataFile)
 	if err != nil {
-		log.Println("文件打开失败", err.Error())
+		log.Println("equipment文件打开失败", err.Error())
 		return
 	}
 	defer filePtr.Close()
@@ -32,6 +39,21 @@ func init() {
 		log.Println("读取equipment文件错误", err.Error())
 	} else {
 		log.Println("读取equipment文件成功")
+	}
+
+	//文件读取
+	filePtr, err = os.Open(ApplicationDataFile)
+	if err != nil {
+		log.Println("application文件打开失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	decoder = json.NewDecoder(filePtr)
+	err = decoder.Decode(&ApplicationCache)
+	if err != nil {
+		log.Println("读取application文件错误", err.Error())
+	} else {
+		log.Println("读取application文件成功")
 	}
 
 	// 数据库读取操作
@@ -70,7 +92,7 @@ func init() {
 			sort.Sort(EquipmentSlice(value))
 		}
 		// 初始化json文件
-		//filePtr, err := os.Create("./equipment.json")
+		//filePtr, err := os.Create(EquipmentDataFile)
 		//if err != nil {
 		//	log.Println("文件创建失败", err.Error())
 		//	return
@@ -141,7 +163,7 @@ func UpdateHeartHot() string {
 			break
 		}
 	}
-	UpdateJson()
+	UpdateEquipmentJson()
 	return "success"
 }
 
@@ -167,9 +189,16 @@ func UpdateHot(id int64) {
 
 //更新本地json文件
 func UpdateJson() {
+	UpdateApplicationJson()
+	UpdateEquipmentJson()
+}
+
+func UpdateEquipmentJson() {
 	//根据热度排序
 	sort.Sort(EquipmentHotSlice(equipments))
-	filePtr, err := os.OpenFile("./equipment.json", os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+
+	//保存equipment
+	filePtr, err := os.OpenFile(EquipmentDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
 	if err != nil {
 		log.Println("equipment文件读取失败", err.Error())
 		return
@@ -182,6 +211,40 @@ func UpdateJson() {
 		log.Println("更新equipment文件成功")
 	}
 	_ = filePtr.Close()
+
+	//保存application
+	filePtr, err = os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("application文件读取失败", err.Error())
+		return
+	}
+	encoder = json.NewEncoder(filePtr)
+	err = encoder.Encode(ApplicationCache)
+	if err != nil {
+		log.Println("更新application文件错误", err.Error())
+	} else {
+		log.Println("更新application文件成功")
+	}
+	_ = filePtr.Close()
+
+}
+
+func UpdateApplicationJson() {
+	//保存application
+	filePtr, err := os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("application文件读取失败", err.Error())
+		return
+	}
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(ApplicationCache)
+	if err != nil {
+		log.Println("更新application文件错误", err.Error())
+	} else {
+		log.Println("更新application文件成功")
+	}
+	_ = filePtr.Close()
+
 }
 
 func GetDao() *gorm.DB {

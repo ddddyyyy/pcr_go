@@ -10,15 +10,6 @@ import (
 	"strings"
 )
 
-//绑定 数据字段 结构体 例子
-type User struct {
-	Username  string `json:"username"`
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	City      string `json:"city"`
-	Age       int    `json:"age"`
-}
-
 func init() {
 	log.SetPrefix("[PCR]")
 	log.SetFlags(log.Ldate | log.Lshortfile)
@@ -26,6 +17,8 @@ func init() {
 
 func main() {
 	app := iris.New()
+
+	app.Use(CounterHandler)
 
 	app.HandleDir("/", "./dist")
 
@@ -79,7 +72,7 @@ func getEquipmentMap(ctx iris.Context) {
 		sorts := getSortedKey(param, cache)
 		//写入数据
 		_, _ = ctx.JSON(sorts.Keys)
-		UpdateJson()
+		UpdateEquipmentJson()
 	}
 }
 
@@ -112,7 +105,7 @@ func getEquipmentMapInfo(ctx iris.Context) {
 		}
 		//写入数据
 		_, _ = ctx.JSON(res)
-		UpdateJson()
+		UpdateEquipmentJson()
 	} else {
 		fmt.Println(err)
 	}
