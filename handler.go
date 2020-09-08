@@ -29,6 +29,7 @@ func CounterHandler(ctx iris.Context) {
 		ApplicationCache["visitorCount"] = i + 1
 		UpdateApplicationJson()
 	}
+	ctx.Next()
 }
 
 // ClientIP 尽最大努力实现获取客户端 IP 的算法。

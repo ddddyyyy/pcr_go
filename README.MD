@@ -1,6 +1,8 @@
 # 公主连接装备查看器
 
 > [访问地址](https://pcr-go-server.us-south.cf.appdomain.cloud/)
+>
+>采用IBM Cloud Foundry进行项目的自动化部署 
 
 ## 实现功能
 

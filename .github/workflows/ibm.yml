@@ -18,18 +18,18 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
-      - name: Fetch data to equipment.json
-        run: |
-          curl --request GET -sL \
-               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/updateHeartHot'
-          curl --request GET -sL \
-               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/get'\
-               --output './equipment.json'
+#      - name: Fetch data to equipment.json
+#        run: |
+#          curl --request GET -sL \
+#               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/updateHeartHot'
+#          curl --request GET -sL \
+#               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/get'\
+#               --output './equipment.json'
       - name: Commit files
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git commit -m "Update equipment.json and application.json automatically" -a
+          git commit -m "Update equipment.json and application.json automatically" -a || true
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:

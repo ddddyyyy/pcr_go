@@ -39,6 +39,8 @@ func main() {
 		v1.Post("sendRI", getEquipmentMapInfo)
 		v1.Get("cache", getMapCache)
 		v1.Get("updateHeartHot", updateHeartHot)
+		v1.Get("equipments", getEquipmentListInfo)
+		v1.Get("application", getApplicationInfo)
 	}
 
 	//监听 HTTP/1.x & HTTP/2 客户端在  localhost 端口号8080 设置字符集
@@ -57,6 +59,14 @@ func updateHeartHot(ctx iris.Context) {
 
 func getMapCache(ctx iris.Context) {
 	_, _ = ctx.JSON(GetMapCache())
+}
+
+func getEquipmentListInfo(ctx iris.Context) {
+	_, _ = ctx.JSON(equipments)
+}
+
+func getApplicationInfo(ctx iris.Context) {
+	_, _ = ctx.JSON(ApplicationCache)
 }
 
 //得到装备掉落地图信息
