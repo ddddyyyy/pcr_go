@@ -133,7 +133,7 @@ func getSortedKey(param Param, cache map[string]int) *ValueSorter {
 					tV, _ := strconv.ParseInt(value[:len(value)-1], 10, 64)
 					tV = tV * int64(cache[equipment.Title])
 					tK := strings.Replace(key, "\t", "", -1) //地图名
-					if strings.Contains(tK, "36") || strings.Contains(tK, "35") || strings.Contains(tK, "34") {
+					if strings.Contains(tK, "36") {
 						continue
 					}
 					if strings.Contains(tK, "VH") || strings.Contains(tK, "HARD") {
