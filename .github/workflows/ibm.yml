@@ -56,7 +56,7 @@ jobs:
           ORG: ${{ secrets.ORG }}
         run: |
           ./IBM_Cloud_CLI/ibmcloud target -g "$RESOURSE_ID"
-          ./IBM_Cloud_CLI/ibmcloud target -o "$ORG"
+          ./IBM_Cloud_CLI/ibmcloud target -o madongyu2115601599@gmail.com
           ./IBM_Cloud_CLI/ibmcloud target --cf
           ./IBM_Cloud_CLI/ibmcloud cf install -v 6.51.0
       - name: Republish IBM Cloud FOR PCR GO SERVER
