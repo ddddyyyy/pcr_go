@@ -3,6 +3,7 @@ name: IBM Cloud Auto Restart
 on:
   push:
     paths:
+      - "**"
       - '!equipment.json'
   schedule:
     - cron: '0 5 * * FRI'
