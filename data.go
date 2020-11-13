@@ -1,9 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
-	"github.com/liuzl/gocc"
+	"github.com/semicircle/gozhszht"
 	"log"
 	"regexp"
 	"strconv"
@@ -16,17 +15,18 @@ func isNum(s string) bool {
 }
 
 func t2s(text string) string {
-	cc, err := gocc.New("t2s")
-	if err != nil {
-		log.Fatal(err)
-		return ""
-	}
-	res, err := cc.Convert(text)
-	if err != nil {
-		log.Fatal(err)
-		return ""
-	}
-	return res
+	return gozhszht.ToSimple(text)
+	//cc, err := gocc.New("t2s")
+	//if err != nil {
+	//	log.Println(err)
+	//	return ""
+	//}
+	//res, err := cc.Convert(text)
+	//if err != nil {
+	//	log.Println(err)
+	//	return ""
+	//}
+	//return res
 }
 
 //根据excel同步角色信息
@@ -212,7 +212,7 @@ func SyncCharacterDataFromExcel() {
 	log.SetFlags(log.Ldate | log.Lshortfile)
 	xlsx, err := excelize.OpenFile("./RANK.xlsx")
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 		return
 	}
 	rows := xlsx.GetRows(xlsx.GetSheetMap()[1])
@@ -290,11 +290,6 @@ func SyncCharacterDataFromExcel() {
 					break
 				}
 			}
-			if oc == c {
-				fmt.Println(row)
-				fmt.Println(xlsx.GetCellValue(xlsx.GetSheetMap()[1], "C"+strconv.Itoa(i)), "C"+strconv.Itoa(i))
-			}
-
 		}
 	}
 	InitCharacterDataFile(characterList)

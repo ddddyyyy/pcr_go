@@ -3,7 +3,6 @@ module pcr
 require (
 	github.com/360EntSecGroup-Skylar/excelize v1.4.1
 	github.com/CloudyKit/fastprinter v0.0.0-20200109182630-33d98a066a53 // indirect
-	github.com/adamzy/cedar-go v0.0.0-20170805034717-80a9c64b256d // indirect
 	github.com/ajg/form v1.5.1 // indirect
 	github.com/fasthttp-contrib/websocket v0.0.0-20160511215533-1f3b11f56072 // indirect
 	github.com/google/go-querystring v1.0.0 // indirect
@@ -15,12 +14,10 @@ require (
 	github.com/kataras/golog v0.0.18 // indirect
 	github.com/kataras/iris/v12 v12.1.2
 	github.com/kr/pretty v0.2.1 // indirect
-	github.com/liuzl/cedar-go v0.0.0-20170805034717-80a9c64b256d // indirect
-	github.com/liuzl/da v0.0.0-20180704015230-14771aad5b1d // indirect
-	github.com/liuzl/gocc v0.0.0-20200216023908-f8cb162baf44
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/microcosm-cc/bluemonday v1.0.3 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
+	github.com/semicircle/gozhszht v0.0.0-20141030090529-b1f70c466858
 	github.com/sergi/go-diff v1.1.0 // indirect
 	github.com/shurcooL/sanitized_anchor_name v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.6.4 // indirect
