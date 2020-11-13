@@ -210,7 +210,7 @@ func SyncCharacterDataFromExcel() {
 
 	log.SetPrefix("[PCR]")
 	log.SetFlags(log.Ldate | log.Lshortfile)
-	xlsx, err := excelize.OpenFile("/Users/madongyu/Downloads/RANK.xlsx")
+	xlsx, err := excelize.OpenFile("./RANK.xlsx")
 	if err != nil {
 		fmt.Println(err)
 		return
