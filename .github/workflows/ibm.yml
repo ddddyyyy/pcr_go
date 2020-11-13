@@ -22,7 +22,7 @@ jobs:
       - name: Fetch data to equipment.json and application.json
         run: |
           curl --request GET -sL \
-               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/equipments'\
+               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/get'\
                --output './equipment.json'
           curl --request GET -sL \
                --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/application'\
