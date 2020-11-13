@@ -1,13 +1,28 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/semicircle/gozhszht"
 	"log"
+	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 )
+
+const (
+	EquipmentDataFile   = "./equipment.json"
+	ApplicationDataFile = "./application.json"
+	CharacterDataFile   = "./character.json"
+)
+
+var MapCache map[string][]Equipment
+var ApplicationCache map[string]interface{}
+var equipments []Equipment
+var characters []Character
 
 func isNum(s string) bool {
 	_, err := strconv.ParseFloat(s, 64)
@@ -293,4 +308,122 @@ func SyncCharacterDataFromExcel() {
 		}
 	}
 	InitCharacterDataFile(characterList)
+}
+
+func InitCharacterDataFile(_characters []Character) {
+	filePtr, err := os.Create(CharacterDataFile)
+	if err != nil {
+		log.Println("character文件创建失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(_characters)
+	if err != nil {
+		log.Println("character编码错误", err.Error())
+	} else {
+		log.Println("character编码成功")
+	}
+	copy(characters, _characters)
+}
+
+func InitEquipmentDataInfoFromJsonFile() {
+	MapCache = make(map[string][]Equipment)
+	ApplicationCache = make(map[string]interface{})
+	var err error
+
+	//文件读取
+	filePtr, err := os.Open(EquipmentDataFile)
+	if err != nil {
+		log.Println("equipment文件打开失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	decoder := json.NewDecoder(filePtr)
+	err = decoder.Decode(&equipments)
+	if err != nil {
+		log.Println("读取equipment文件错误", err.Error())
+	} else {
+		log.Println("读取equipment文件成功")
+	}
+
+	//文件读取
+	filePtr, err = os.Open(ApplicationDataFile)
+	if err != nil {
+		log.Println("application文件打开失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	decoder = json.NewDecoder(filePtr)
+	err = decoder.Decode(&ApplicationCache)
+	if err != nil {
+		log.Println("读取application文件错误", err.Error())
+	} else {
+		log.Println("读取application文件成功")
+	}
+
+	//角色信息读取
+	filePtr, err = os.Open(CharacterDataFile)
+	if err != nil {
+		log.Println("character文件打开失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	decoder = json.NewDecoder(filePtr)
+	err = decoder.Decode(&characters)
+	if err != nil {
+		log.Println("读取character文件错误", err.Error())
+	} else {
+		log.Println("读取character文件成功")
+	}
+
+	if err == nil {
+		for _, equipment := range equipments {
+			var temp map[string]string //掉落地图
+			if err := json.Unmarshal([]byte(equipment.Map), &temp); err == nil {
+				for key, value := range temp {
+					tV, _ := strconv.ParseInt(value[:len(value)-1], 10, 8)
+					tK := strings.Replace(key, "\t", "", -1) //地图名
+					var tempEquipment = Equipment{
+						Id:       equipment.Id,
+						Title:    equipment.Title,
+						Hot:      equipment.Hot,
+						Url:      equipment.Url,
+						Priority: tV,
+					}
+					if MapCache[tK] == nil {
+						MapCache[tK] = []Equipment{tempEquipment}
+					} else {
+						t := append(MapCache[tK], tempEquipment)
+						MapCache[tK] = t
+					}
+				}
+			}
+		}
+		//根据爆率排序
+		for _, value := range MapCache {
+			sort.Sort(EquipmentSlice(value))
+		}
+	}
+}
+
+func SyncEquipmentDataCompareWithDataBaseAndJson() {
+	var es []Equipment
+	compile := regexp.MustCompile(`\d.*\.png$`)
+	Dao.Select("id,title,hot,id,map,url").Order("hot DESC").Find(&es, "enable = 1")
+	for _, e := range es {
+		for i := 0; i < len(equipments); i++ {
+			_e := equipments[i]
+			if _e.Id == e.Id {
+				_e.Map = e.Map
+				e.Hot = _e.Hot
+				_id := compile.FindStringSubmatch(e.Url)[0]
+				e.Id, _ = strconv.ParseInt(_id[:len(_id)-4], 10, 64)
+				_e.Id = e.Id
+				fmt.Println(e)
+				fmt.Println(_e)
+				return
+			}
+		}
+	}
 }

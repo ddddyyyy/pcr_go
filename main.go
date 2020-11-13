@@ -34,7 +34,7 @@ func main() {
 		v1.Post("sendRI", getEquipmentMapInfo)
 		v1.Get("cache", getMapCache)
 		v1.Get("updateHeartHot", updateHeartHot)
-		v1.Get("equipments", getEquipmentListInfo)
+		v1.Get("updateEquipments", updateEquipmentData)
 		v1.Get("characters", getCharacterListInfo)
 		v1.Get("updateCharacters", updateCharacterData)
 		v1.Get("application", getApplicationInfo)
@@ -58,7 +58,9 @@ func getMapCache(ctx iris.Context) {
 	_, _ = ctx.JSON(GetMapCache())
 }
 
-func getEquipmentListInfo(ctx iris.Context) {
+//从文件重新读取装备信息
+func updateEquipmentData(ctx iris.Context) {
+	InitEquipmentDataInfoFromJsonFile()
 	_, _ = ctx.JSON(equipments)
 }
 
