@@ -2,7 +2,7 @@ package main
 
 import "sort"
 
-//Equiment 装备结构体
+//Equipment 装备结构体
 type Equipment struct {
 	Id       int64  `json:"id" gorm:"primary_key"`
 	Title    string `json:"title"`
@@ -14,13 +14,29 @@ type Equipment struct {
 	IsSelect bool   `json:"isSelect"`
 }
 
+//角色信息
+type Character struct {
+	Id             int64  `json:"id"`
+	Name           string `json:"name"`
+	RealName       string `json:"realName"`
+	Distance       int64  `json:"distance"`
+	Rank           string `json:"rank"`
+	Star           string `json:"star"`
+	UnionEquipment string `json:"unionEquipment"`
+	Inform         string `json:"inform"`
+}
+
 // 请求的参数数组
 type Param struct {
 	List []string `json:"list"`
 }
 
 func (Equipment) TableName() string {
-	return "pcr"
+	return "equipment"
+}
+
+func (Character) TableName() string {
+	return "character"
 }
 
 // map排序

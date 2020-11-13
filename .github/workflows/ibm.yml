@@ -6,6 +6,7 @@ on:
       - '**'
       - '!equipment.json'
       - '!application.json'
+      - '!character.json'
   schedule:
     - cron: '0 5 * * FRI'
 

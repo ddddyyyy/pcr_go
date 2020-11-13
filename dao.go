@@ -15,10 +15,12 @@ var Dao *gorm.DB
 var MapCache map[string][]Equipment
 var ApplicationCache map[string]interface{}
 var equipments []Equipment
+var characters []Character
 
 const (
 	EquipmentDataFile   = "./equipment.json"
 	ApplicationDataFile = "./application.json"
+	CharacterDataFile   = "./character.json"
 )
 
 func init() {
@@ -54,6 +56,21 @@ func init() {
 		log.Println("读取application文件错误", err.Error())
 	} else {
 		log.Println("读取application文件成功")
+	}
+
+	//角色信息读取
+	filePtr, err = os.Open(CharacterDataFile)
+	if err != nil {
+		log.Println("character文件打开失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	decoder = json.NewDecoder(filePtr)
+	err = decoder.Decode(&characters)
+	if err != nil {
+		log.Println("读取character文件错误", err.Error())
+	} else {
+		log.Println("读取character文件成功")
 	}
 
 	// 数据库读取操作
@@ -132,6 +149,23 @@ func GetList() []Equipment {
 	//}
 	//
 	//return nil
+}
+
+func InitCharacterDataFile(_characters []Character) {
+	filePtr, err := os.Create(CharacterDataFile)
+	if err != nil {
+		log.Println("character文件创建失败", err.Error())
+		return
+	}
+	defer filePtr.Close()
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(_characters)
+	if err != nil {
+		log.Println("character编码错误", err.Error())
+	} else {
+		log.Println("character编码成功")
+	}
+	copy(characters, _characters)
 }
 
 func GetListByName(keys []string) []Equipment {

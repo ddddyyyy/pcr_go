@@ -5,17 +5,12 @@ import (
 	"fmt"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
-	"log"
 	"strconv"
 	"strings"
 )
 
-func init() {
-	log.SetPrefix("[PCR]")
-	log.SetFlags(log.Ldate | log.Lshortfile)
-}
-
 func main() {
+
 	app := iris.New()
 
 	app.Use(CounterHandler)
@@ -40,6 +35,8 @@ func main() {
 		v1.Get("cache", getMapCache)
 		v1.Get("updateHeartHot", updateHeartHot)
 		v1.Get("equipments", getEquipmentListInfo)
+		v1.Get("characters", getCharacterListInfo)
+		v1.Get("updateCharacters", updateCharacterData)
 		v1.Get("application", getApplicationInfo)
 	}
 
@@ -63,6 +60,15 @@ func getMapCache(ctx iris.Context) {
 
 func getEquipmentListInfo(ctx iris.Context) {
 	_, _ = ctx.JSON(equipments)
+}
+
+func updateCharacterData(ctx iris.Context) {
+	SyncCharacterDataFromExcel()
+	_, _ = ctx.JSON(characters)
+}
+
+func getCharacterListInfo(ctx iris.Context) {
+	_, _ = ctx.JSON(characters)
 }
 
 func getApplicationInfo(ctx iris.Context) {
