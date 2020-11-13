@@ -5,11 +5,15 @@ import (
 	"fmt"
 	"github.com/iris-contrib/middleware/cors"
 	"github.com/kataras/iris/v12"
+	"log"
 	"strconv"
 	"strings"
 )
 
 func main() {
+
+	log.SetPrefix("[PCR]")
+	log.SetFlags(log.Ldate | log.Lshortfile)
 
 	app := iris.New()
 
@@ -65,7 +69,7 @@ func updateEquipmentData(ctx iris.Context) {
 }
 
 func updateCharacterData(ctx iris.Context) {
-	SyncCharacterDataFromExcel()
+	//SyncCharacterDataFromExcel()
 	_, _ = ctx.JSON(characters)
 }
 

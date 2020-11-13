@@ -22,6 +22,7 @@ var MapCache map[string][]Equipment
 var ApplicationCache map[string]interface{}
 var equipments []Equipment
 var characters []Character
+var characterNameMap map[int]interface{}
 
 func isNum(s string) bool {
 	_, err := strconv.ParseFloat(s, 64)
@@ -43,9 +44,8 @@ func t2s(text string) string {
 	//return res
 }
 
-//根据excel同步角色信息
-func SyncCharacterDataFromExcel() {
-	characters := map[int]interface{}{
+func init() {
+	characterNameMap = map[int]interface{}{
 		1000: []string{"未知角色", "未知キャラ", "Unknown"},
 		1001: []string{"日和", "ヒヨリ", "Hiyori", "日和莉", "猫拳", "🐱👊"},
 		1002: []string{"优衣", "ユイ", "Yui", "种田", "普田", "由衣", "结衣", "ue", "↗↘↗↘"},
@@ -221,9 +221,99 @@ func SyncCharacterDataFromExcel() {
 
 		9000: []string{"祐树", "ユウキ", "Yuuki", "骑士", "骑士君"},
 	}
+}
 
-	log.SetPrefix("[PCR]")
-	log.SetFlags(log.Ldate | log.Lshortfile)
+func SyncCharacterDataFromExcelEM() {
+	xlsx, err := excelize.OpenFile("./RANKEM.xlsx")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	sheetName := xlsx.GetSheetMap()[3]
+	rows := xlsx.GetRows(sheetName)
+	c := 0
+
+	cache := make(map[int]bool)
+
+	var characterList []Character
+
+	for i, row := range rows {
+		distance := xlsx.GetCellValue(sheetName, "H"+strconv.Itoa(i))
+		if isNum(distance) {
+			name := strings.Replace(t2s(row[1]), "\n", " ", -1)
+			if len(name) == 0 {
+				continue
+			}
+			oc := c
+			for _, realName := range strings.Split(name, " ") {
+				if len(realName) == 0 {
+					continue
+				}
+				for k, v := range characterNameMap {
+					_, ok := cache[k]
+					if ok {
+						continue
+					}
+					vs := v.([]string)
+					for _, s := range vs {
+						if strings.Compare(s, realName) == 0 {
+							c += 1
+							cache[k] = true
+							//去除重复的名字
+							names := strings.Split(name, " ")
+							res1 := ""
+							res2 := strings.Join(vs, "")
+							for _, n := range names {
+								if !strings.Contains(res2, n) {
+									res1 += n
+								}
+							}
+							//过滤非中文的昵称
+							//只取两个
+							res2 = ""
+							rc := 0
+							var hzRegexp = regexp.MustCompile("^[\u4e00-\u9fa5].*$")
+							for _, n := range vs {
+								if hzRegexp.MatchString(n) {
+									res2 += n
+									rc += 1
+								}
+								if rc == 2 {
+									break
+								}
+							}
+							name = res1 + res2
+							_distance, _ := strconv.ParseFloat(distance, 64)
+							characterList = append(characterList, Character{
+								Id:             int64(k),
+								Name:           name,
+								RealName:       names[0],
+								Distance:       int64(_distance),
+								Rank:           row[2],
+								Star:           row[4],
+								UnionEquipment: row[4],
+								Inform:         strings.Replace(row[5], "\n", " ", -1),
+							})
+							break
+						}
+					}
+					if oc != c {
+						break
+					}
+				}
+				if oc != c {
+					break
+				}
+			}
+		}
+	}
+	InitCharacterDataFile(characterList)
+}
+
+//根据excel同步角色信息
+func SyncCharacterDataFromExcelWuYu() {
+
 	xlsx, err := excelize.OpenFile("./RANK.xlsx")
 	if err != nil {
 		log.Println(err)
@@ -248,7 +338,7 @@ func SyncCharacterDataFromExcel() {
 				if len(realName) == 0 {
 					continue
 				}
-				for k, v := range characters {
+				for k, v := range characterNameMap {
 					_, ok := cache[k]
 					if ok {
 						continue
