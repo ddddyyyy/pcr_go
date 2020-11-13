@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/360EntSecGroup-Skylar/excelize"
 	"github.com/semicircle/gozhszht"
 	"log"
@@ -413,17 +412,70 @@ func SyncEquipmentDataCompareWithDataBaseAndJson() {
 	Dao.Select("id,title,hot,id,map,url").Order("hot DESC").Find(&es, "enable = 1")
 	for _, e := range es {
 		for i := 0; i < len(equipments); i++ {
-			_e := equipments[i]
-			if _e.Id == e.Id {
-				_e.Map = e.Map
-				e.Hot = _e.Hot
+			if equipments[i].Id == e.Id {
+				equipments[i].Map = e.Map
+				e.Hot = equipments[i].Hot
 				_id := compile.FindStringSubmatch(e.Url)[0]
 				e.Id, _ = strconv.ParseInt(_id[:len(_id)-4], 10, 64)
-				_e.Id = e.Id
-				fmt.Println(e)
-				fmt.Println(_e)
-				return
+				equipments[i].Id = e.Id
+				Dao.Model(&e).Update("hot", e.Hot)
 			}
 		}
 	}
+	UpdateEquipmentJson()
+}
+
+//更新本地json文件
+func UpdateEquipmentJson() {
+	//根据热度排序
+	sort.Sort(EquipmentHotSlice(equipments))
+
+	//保存equipment
+	filePtr, err := os.OpenFile(EquipmentDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("equipment文件读取失败", err.Error())
+		return
+	}
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(equipments)
+	if err != nil {
+		log.Println("更新equipment文件错误", err.Error())
+	} else {
+		log.Println("更新equipment文件成功")
+	}
+	_ = filePtr.Close()
+
+	//保存application
+	filePtr, err = os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("application文件读取失败", err.Error())
+		return
+	}
+	encoder = json.NewEncoder(filePtr)
+	err = encoder.Encode(ApplicationCache)
+	if err != nil {
+		log.Println("更新application文件错误", err.Error())
+	} else {
+		log.Println("更新application文件成功")
+	}
+	_ = filePtr.Close()
+
+}
+
+func UpdateApplicationJson() {
+	//保存application
+	filePtr, err := os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("application文件读取失败", err.Error())
+		return
+	}
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(ApplicationCache)
+	if err != nil {
+		log.Println("更新application文件错误", err.Error())
+	} else {
+		log.Println("更新application文件成功")
+	}
+	_ = filePtr.Close()
+
 }

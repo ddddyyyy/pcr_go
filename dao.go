@@ -1,12 +1,8 @@
 package main
 
 import (
-	"encoding/json"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
-	"log"
-	"os"
-	"sort"
 	"strings"
 )
 
@@ -90,61 +86,6 @@ func UpdateHot(id int64) {
 	//} else {
 	//	Warning.Println(err)
 	//}
-}
-
-//更新本地json文件
-func UpdateEquipmentJson() {
-	//根据热度排序
-	sort.Sort(EquipmentHotSlice(equipments))
-
-	//保存equipment
-	filePtr, err := os.OpenFile(EquipmentDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
-	if err != nil {
-		log.Println("equipment文件读取失败", err.Error())
-		return
-	}
-	encoder := json.NewEncoder(filePtr)
-	err = encoder.Encode(equipments)
-	if err != nil {
-		log.Println("更新equipment文件错误", err.Error())
-	} else {
-		log.Println("更新equipment文件成功")
-	}
-	_ = filePtr.Close()
-
-	//保存application
-	filePtr, err = os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
-	if err != nil {
-		log.Println("application文件读取失败", err.Error())
-		return
-	}
-	encoder = json.NewEncoder(filePtr)
-	err = encoder.Encode(ApplicationCache)
-	if err != nil {
-		log.Println("更新application文件错误", err.Error())
-	} else {
-		log.Println("更新application文件成功")
-	}
-	_ = filePtr.Close()
-
-}
-
-func UpdateApplicationJson() {
-	//保存application
-	filePtr, err := os.OpenFile(ApplicationDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
-	if err != nil {
-		log.Println("application文件读取失败", err.Error())
-		return
-	}
-	encoder := json.NewEncoder(filePtr)
-	err = encoder.Encode(ApplicationCache)
-	if err != nil {
-		log.Println("更新application文件错误", err.Error())
-	} else {
-		log.Println("更新application文件成功")
-	}
-	_ = filePtr.Close()
-
 }
 
 //func GetDao() *gorm.DB {
