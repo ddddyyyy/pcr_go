@@ -6,7 +6,7 @@ on:
       - 'equipment.json'
       - '!application.json'
       - '!ibm*.yml'
-      - 'ibm*.yml'
+      - '!ibm.yml'
 
 jobs:
   ibm-cloud-restart:
