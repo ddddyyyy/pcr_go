@@ -5,6 +5,7 @@ on:
     paths:
       - 'equipment.json'
       - '!application.json'
+      - '!ibm*.yml'
 
 jobs:
   ibm-cloud-restart:

@@ -5,6 +5,8 @@ on:
     paths:
       - "**"
       - '!equipment.json'
+      - '!application.json'
+      - '!ibm*.yml'
   schedule:
     - cron: '0 5 * * FRI'
 

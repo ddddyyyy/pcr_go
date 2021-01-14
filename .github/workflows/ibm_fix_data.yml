@@ -3,8 +3,8 @@ name: IBM Cloud Auto Restart To Fix Data
 on:
   push:
     paths:
-      - 'equipment.json'
       - 'application.json'
+      - '!ibm*.yml'
 
 jobs:
   ibm-cloud-restart:
