@@ -64,7 +64,7 @@ func UpdateHeartHot() string {
 			break
 		}
 	}
-	UpdateEquipmentJson()
+	UpdateAllJsonFile()
 	return "success"
 }
 
