@@ -1,10 +1,10 @@
-name: IBM Cloud Auto Restart Without Update Equipment
+name: IBM Cloud Auto Restart To Fix Data
 
 on:
   push:
     paths:
       - 'equipment.json'
-      - '!application.json'
+      - 'application.json'
 
 jobs:
   ibm-cloud-restart:
@@ -15,20 +15,6 @@ jobs:
         with:
           persist-credentials: false # otherwise, the token used is the GITHUB_TOKEN, instead of your personal token
           fetch-depth: 0 # otherwise, you will failed to push refs to dest repo
-      - name: Fetch data to application.json
-        run: |
-          curl --request GET -sL \
-               --url 'https://pcr-go-server.us-south.cf.appdomain.cloud/application'\
-               --output './application.json'
-      - name: Commit files
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git commit -m "Update equipment.json and application.json automatically" -a || true
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
       - name: Init
         run: |
           chmod -R 777 ./IBM_Cloud_CLI/
