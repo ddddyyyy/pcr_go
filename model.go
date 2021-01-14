@@ -6,6 +6,7 @@ import "sort"
 type Equipment struct {
 	Id       int64  `json:"id" gorm:"primary_key"`
 	Title    string `json:"title"`
+	Kind     string `json:"kind"`
 	Map      string `json:"map"`
 	Enable   int    `json:"enable"`
 	Hot      int64  `json:"hot"`

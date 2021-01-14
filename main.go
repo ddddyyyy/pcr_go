@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-
 	log.SetPrefix("[PCR]")
 	log.SetFlags(log.Ldate | log.Lshortfile)
 
@@ -94,7 +93,7 @@ func getEquipmentMap(ctx iris.Context) {
 		sorts := getSortedKey(param, cache)
 		//写入数据
 		_, _ = ctx.JSON(sorts.Keys)
-		UpdateEquipmentJson()
+		UpdateAllJsonFile()
 	}
 }
 
@@ -127,7 +126,7 @@ func getEquipmentMapInfo(ctx iris.Context) {
 		}
 		//写入数据
 		_, _ = ctx.JSON(res)
-		UpdateEquipmentJson()
+		UpdateAllJsonFile()
 	} else {
 		fmt.Println(err)
 	}

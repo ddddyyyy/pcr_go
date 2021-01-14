@@ -29,19 +29,9 @@ func isNum(s string) bool {
 	return err == nil
 }
 
+//繁体转简体
 func t2s(text string) string {
 	return gozhszht.ToSimple(text)
-	//cc, err := gocc.New("t2s")
-	//if err != nil {
-	//	log.Println(err)
-	//	return ""
-	//}
-	//res, err := cc.Convert(text)
-	//if err != nil {
-	//	log.Println(err)
-	//	return ""
-	//}
-	//return res
 }
 
 func init() {
@@ -498,25 +488,49 @@ func InitEquipmentDataInfoFromJsonFile() {
 
 func SyncEquipmentDataCompareWithDataBaseAndJson() {
 	var es []Equipment
-	compile := regexp.MustCompile(`\d.*\.png$`)
-	Dao.Select("id,title,hot,id,map,url").Order("hot DESC").Find(&es, "enable = 1")
+	//compile := regexp.MustCompile(`\d.*\.png$`)
+	Dao.Select("id,title,hot,id,map,url,kind").Order("hot DESC").Find(&es, "enable = 1")
 	for _, e := range es {
+		flag := false
 		for i := 0; i < len(equipments); i++ {
 			if equipments[i].Id == e.Id {
 				equipments[i].Map = e.Map
+				equipments[i].Title = e.Title
+				equipments[i].Kind = t2s(e.Kind) // 种类
 				e.Hot = equipments[i].Hot
-				_id := compile.FindStringSubmatch(e.Url)[0]
-				e.Id, _ = strconv.ParseInt(_id[:len(_id)-4], 10, 64)
-				equipments[i].Id = e.Id
+				//_id := compile.FindStringSubmatch(e.Url)[0]
+				//e.Id, _ = strconv.ParseInt(_id[:len(_id)-4], 10, 64)
+				//equipments[i].Id = e.Id
 				Dao.Model(&e).Update("hot", e.Hot)
+				flag = true
+				break
 			}
 		}
+		if !flag {
+			equipments = append(equipments, e)
+		}
 	}
-	UpdateEquipmentJson()
+	//根据热度排序
+	sort.Sort(EquipmentHotSlice(equipments))
+
+	//保存equipment
+	filePtr, err := os.OpenFile(EquipmentDataFile, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0644)
+	if err != nil {
+		log.Println("equipment文件读取失败", err.Error())
+		return
+	}
+	encoder := json.NewEncoder(filePtr)
+	err = encoder.Encode(equipments)
+	if err != nil {
+		log.Println("更新equipment文件错误", err.Error())
+	} else {
+		log.Println("更新equipment文件成功")
+	}
+	_ = filePtr.Close()
 }
 
 //更新本地json文件
-func UpdateEquipmentJson() {
+func UpdateAllJsonFile() {
 	//根据热度排序
 	sort.Sort(EquipmentHotSlice(equipments))
 
