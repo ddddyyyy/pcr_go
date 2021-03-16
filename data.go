@@ -312,7 +312,7 @@ func SyncCharacterDataFromExcelEM() {
 //根据excel同步角色信息
 func SyncCharacterDataFromExcelWuYu() {
 
-	xlsx, err := excelize.OpenFile("/Users/madongyu/Downloads/Document/RANK (18-4)01.14.xlsx")
+	xlsx, err := excelize.OpenFile("/Users/madongyu/Downloads/Document/RANK (19-3)03.14.xlsx")
 	if err != nil {
 		log.Println(err)
 		return
