@@ -15,7 +15,7 @@ require (
 	github.com/kataras/iris/v12 v12.1.2
 	github.com/kr/pretty v0.2.1 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
-	github.com/microcosm-cc/bluemonday v1.0.3 // indirect
+	github.com/microcosm-cc/bluemonday v1.0.5 // indirect
 	github.com/moul/http2curl v1.0.0 // indirect
 	github.com/semicircle/gozhszht v0.0.0-20141030090529-b1f70c466858
 	github.com/sergi/go-diff v1.1.0 // indirect
