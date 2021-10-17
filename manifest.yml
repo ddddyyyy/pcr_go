@@ -3,4 +3,4 @@ applications:
     random-route: true
     memory: 64M
     buildpacks:
-      - https://github.com/cloudfoundry/go-buildpack.git#v1.9.34
+      - https://github.com/cloudfoundry/go-buildpack.git#v1.9.33
