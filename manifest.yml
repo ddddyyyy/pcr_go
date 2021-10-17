@@ -4,8 +4,8 @@ applications:
     random-route: true
     memory: 64M
     buildpack: https://github.com/cloudfoundry/go-buildpack.git
-    env:
-      GOVERSION: go1.17
+#    env:
+#      GOVERSION: go1.17
 #    buildpacks:
 #      - appdbuildpack
 #      - https://github.com/cloudfoundry/go-buildpack.git#v1.9.34
