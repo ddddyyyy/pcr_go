@@ -2,7 +2,3 @@ applications:
   - name: pcr-go-server
     random-route: true
     memory: 64M
-    env:
-      GOVERSION: go1.6
-    buildpacks:
-      - https://github.com/cloudfoundry/go-buildpack.git#v1.9.36
