@@ -56,7 +56,7 @@ jobs:
           RESOURSE_ID: ${{ secrets.RESOURSE_ID }}
         run: |
           ./IBM_Cloud_CLI/ibmcloud target -g "$RESOURSE_ID"
-          ./IBM_Cloud_CLI/ibmcloud cf install -v 6.51.0
+          ./IBM_Cloud_CLI/ibmcloud cf install
           ./IBM_Cloud_CLI/ibmcloud target --cf
       - name: Republish IBM Cloud FOR PCR GO SERVER
         run: |
