@@ -7,7 +7,7 @@ install: prepare
 	go install
 
 build: prepare
-	go build
+	go build pcr
 
 test: prepare build
 	echo "no tests"
