@@ -1,3 +1,4 @@
+---
 applications:
   - name: pcr-go-server
     random-route: true
